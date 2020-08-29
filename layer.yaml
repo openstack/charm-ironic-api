@@ -1,0 +1,11 @@
+includes:
+  - layer:openstack
+  - layer:openstack-api
+  - interface:mysql-shared
+  - interface:rabbitmq
+  - interface:keystone
+repo: https://github.com/gabriel-samfira/charm-ironic-api
+options:
+  basic:
+    use_venv: true
+    include_system_packages: true

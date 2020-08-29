@@ -1,0 +1,7 @@
+{% if not tftpboot -%}
+{% set tftpboot = "/tftpboot" -%}
+{% endif -%}
+TFTP_USERNAME="root"
+TFTP_DIRECTORY="{{ tftpboot }}"
+TFTP_ADDRESS=":69"
+TFTP_OPTIONS="--secure -4 -v -v -v -v -v --map-file {{tftpboot}}/map-file"
