@@ -58,9 +58,9 @@ def assess_status():
 
 def setup_endpoint(keystone):
     charm = IronicAPICharm.singleton
-    public_ep = '{}/v1'.format(charm.public_url)
-    internal_ep = '{}/v1'.format(charm.internal_url)
-    admin_ep = '{}/v1'.format(charm.admin_url)
+    public_ep = '{}'.format(charm.public_url)
+    internal_ep = '{}'.format(charm.internal_url)
+    admin_ep = '{}'.format(charm.admin_url)
     keystone.register_endpoints(charm.service_type,
                                 charm.region,
                                 public_ep,

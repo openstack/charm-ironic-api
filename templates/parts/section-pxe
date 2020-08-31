@@ -1,6 +1,9 @@
 [pxe]
 # Ironic compute node's tftp root path. (string value)
-tftp_root=/tftpboot
+{% if not tftpboot -%}
+{% set tftpboot = "/tftpboot" -%}
+{% endif -%}
+tftp_root={{tftpboot}}
 
 # IP address of Ironic compute node's tftp server. (string
 # value)

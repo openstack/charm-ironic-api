@@ -58,5 +58,17 @@ options:
     type: string
     description: |
       The API port ironic-api will listen on.
+  max-tftp-block-size:
+    default: 0
+    type: integer
+    description: |
+      The maximum block size to use in the TFTP server. Setting this option
+      to anything other than 0, will force the block size sent over TFTP to
+      the value specified here. Valid range is 512-65535. By default, clients
+      will negotiate the block size.
+
+      Use this option if you're running ironic in a network with lower
+      MTU. The value of this option should be 32 bits less than the MTU.
+      If your MTU is 1450, the value for this option should be 1418.
 
   

@@ -11,8 +11,8 @@ _IRONIC_GROUP = "ironic"
 
 class PXEBootBase(object):
     
-    TFTP_ROOT = "/tftproot"
-    HTTP_ROOT = "/httproot"
+    TFTP_ROOT = "/tftpboot"
+    HTTP_ROOT = "/httpboot"
     IPXE_BOOT = os.path.join(HTTP_ROOT, "boot.ipxe")
     GRUB_DIR = os.path.join(TFTP_ROOT, "grub")
     MAP_FILE = os.path.join(TFTP_ROOT, "map-file")
@@ -30,7 +30,7 @@ class PXEBootBase(object):
         "/usr/lib/ipxe/ipxe.efi": "ipxe.efi",
     }
 
-    TFTP_PACKAGES = ["tftp-hpa"]
+    TFTP_PACKAGES = ["tftpd-hpa"]
     PACKAGES = [
         'syslinux-common',
         'pxelinux',
@@ -101,12 +101,14 @@ class PXEBootBase(object):
         cfg_dir = os.path.dirname(self.TFTP_CONFIG)
         if os.path.isdir(cfg_dir) is False:
             raise Exception("Could not find %s" % cfg_dir)
-        render(source='tftp-hpa',
+        render(source='tftpd-hpa',
            target=self.TFTP_CONFIG,
            owner="root",
            perms=0o644,
            context={
                "tftpboot": self.TFTP_ROOT,
+               "max_tftp_block_size": self._config.get(
+                   "max_tftp_block_size", 0)
            })
     
     def configure_resources(self):
