@@ -1,5 +1,4 @@
 includes:
-  - layer:openstack
   - layer:openstack-api
   - interface:mysql-shared
   - interface:rabbitmq

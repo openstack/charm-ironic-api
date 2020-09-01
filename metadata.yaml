@@ -15,8 +15,6 @@ tags:
 series:
   - bionic
   - focal
-extra-bindings:
-  deployment:
 subordinate: false
 requires:
   shared-db:
