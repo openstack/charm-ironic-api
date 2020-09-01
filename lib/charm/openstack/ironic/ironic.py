@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 
 import collections
+import os
 
 import charms_openstack.charm
 import charms_openstack.adapters
@@ -26,7 +27,13 @@ PACKAGES = [
     'ipmitool']
 
 IRONIC_DIR = "/etc/ironic/"
-IRONIC_CONF = IRONIC_DIR + "ironic.conf"
+IRONIC_CONF = os.path.join(IRONIC_DIR, "ironic.conf")
+ROOTWRAP_CONF = os.path.join(IRONIC_DIR, "rootwrap.conf")
+FILTERS_DIR = os.path.join(IRONIC_DIR, "rootwrap.d")
+IRONIC_LIB_FILTERS = os.path.join(
+    FILTERS_DIR, "ironic-lib.filters")
+IRONIC_UTILS_FILTERS = os.path.join(
+    FILTERS_DIR, "ironic-utils.filters")
 TFTP_CONF = "/etc/default/tftpd-hpa"
 
 OPENSTACK_RELEASE_KEY = 'ironic-charm.openstack-release-version'
@@ -83,7 +90,7 @@ class IronicAPICharm(charms_openstack.charm.HAOpenStackCharm):
     }
     service_type = 'ironic'
     default_service = 'ironic-api'
-    services = ['ironic-api', 'ironic-conductor']
+    services = ['ironic-api', 'ironic-conductor', 'tftpd-hpa']
     sync_cmd = ['ironic-dbsync', 'upgrade']
 
     required_relations = [
@@ -91,7 +98,9 @@ class IronicAPICharm(charms_openstack.charm.HAOpenStackCharm):
 
     restart_map = {
         IRONIC_CONF: services,
-        TFTP_CONF: ["tftp-hpa"]
+        IRONIC_UTILS_FILTERS: services,
+        IRONIC_LIB_FILTERS: services,
+        ROOTWRAP_CONF: services,
     }
 
     ha_resources = ['vips', 'haproxy']
@@ -113,6 +122,10 @@ class IronicAPICharm(charms_openstack.charm.HAOpenStackCharm):
         super().__init__(**kw)
         self.pxe_config = controller_utils.get_pxe_config_class(
             self.config)
+        if self.config.get('use_ipxe', False):
+            self.services.append('nginx')
+        else:
+            self.purge_packages.append("nginx")
 
     def get_amqp_credentials(self):
         """Provide the default amqp username and vhost as a tuple.

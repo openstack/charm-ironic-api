@@ -2,7 +2,7 @@ import os
 import shutil
 
 from charmhelpers.core.templating import render
-from charmhelpers.core.host import get_distrib_codename
+import charmhelpers.core.host as ch_host
 import charmhelpers.fetch as fetch
 
 _IRONIC_USER = "ironic"
@@ -13,6 +13,7 @@ class PXEBootBase(object):
     
     TFTP_ROOT = "/tftpboot"
     HTTP_ROOT = "/httpboot"
+    HTTP_SERVER_CONF = "/etc/nginx/nginx.conf"
     IPXE_BOOT = os.path.join(HTTP_ROOT, "boot.ipxe")
     GRUB_DIR = os.path.join(TFTP_ROOT, "grub")
     MAP_FILE = os.path.join(TFTP_ROOT, "map-file")
@@ -38,6 +39,7 @@ class PXEBootBase(object):
         'shim-signed',
         'ipxe',
     ]
+    HTTPD_PACKAGES = ["nginx"]
 
     def __init__(self, charm_config):
         self._config = charm_config
@@ -51,15 +53,8 @@ class PXEBootBase(object):
             shutil.copy(
                 f, os.path.join(self.TFTP_ROOT, self.FILE_MAP[f]),
                 follow_symlinks=True)
-        self._recursive_chown(
-            self.TFTP_ROOT, user=_IRONIC_USER, group=_IRONIC_GROUP)
-
-    def _recursive_chown(self, path, user=None, group=None):
-        for root, _, files in os.walk(path):
-            shutil.chown(root, user=user, group=group)
-            for f in files:
-                shutil.chown(
-                    os.path.join(root, f), user=user, group=group)
+        ch_host.chownr(
+            self.TFTP_ROOT, _IRONIC_USER, _IRONIC_GROUP, chowntopdir=True)
 
     def _ensure_folders(self):
         if os.path.isdir(self.TFTP_ROOT) is False:
@@ -74,10 +69,10 @@ class PXEBootBase(object):
         if os.path.isdir(self.GRUB_DIR) is False:
             os.makedirs(self.GRUB_DIR)
         
-        self._recursive_chown(
-            self.TFTP_ROOT, user=_IRONIC_USER, group=_IRONIC_GROUP)
-        self._recursive_chown(
-            self.HTTP_ROOT, user=_IRONIC_USER, group=_IRONIC_GROUP)
+        ch_host.chownr(
+            self.TFTP_ROOT, _IRONIC_USER, _IRONIC_GROUP, chowntopdir=True)
+        ch_host.chownr(
+            self.HTTP_ROOT, _IRONIC_USER, _IRONIC_GROUP, chowntopdir=True)
 
     def _create_file_map(self):
         self._ensure_folders()
@@ -109,6 +104,21 @@ class PXEBootBase(object):
                "tftpboot": self.TFTP_ROOT,
                "max_tftp_block_size": self._config.get(
                    "max_tftp_block_size", 0)
+           })
+    
+    def _enable_ipxe_webserver(self):
+        if self._config.get("use_ipxe", False) is False:
+            return
+        fetch.apt_install(self.HTTPD_PACKAGES, fatal=True)
+        render(source='nginx.conf',
+           target=self.HTTP_SERVER_CONF,
+           owner="root",
+           perms=0o644,
+           context={
+               "ironic_user": _IRONIC_USER,
+               "ipxe_http_port": self._config.get(
+                   "ipxe_http_port", 8080),
+               "httpboot": self.HTTP_ROOT,
            })
     
     def configure_resources(self):
@@ -144,7 +154,7 @@ def get_pxe_config_class(charm_config):
     # we are installing on. This function serves as a factory which will
     # return an instance of the proper class to the charm. For now we only
     # have one class.
-    series = get_distrib_codename()
+    series = ch_host.get_distrib_codename()
     if series == "bionic":
         return PXEBootBionic(charm_config)
     return PXEBootBase(charm_config)

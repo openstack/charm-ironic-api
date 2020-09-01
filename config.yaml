@@ -53,22 +53,28 @@ options:
     type: string
     description: |
       The port used for the HTTP server used to serve iPXE resources.
-  api-port:
-    default: "6385"
-    type: string
-    description: |
-      The API port ironic-api will listen on.
   max-tftp-block-size:
     default: 0
-    type: integer
+    type: int
     description: |
-      The maximum block size to use in the TFTP server. Setting this option
-      to anything other than 0, will force the block size sent over TFTP to
-      the value specified here. Valid range is 512-65535. By default, clients
-      will negotiate the block size.
+      Force TFTP server maximum block size. Setting this option to anything
+      other than 0, will force the block size sent over TFTP to the value
+      specified here. Valid range is 512-65535. By default, clients will
+      negotiate the block size.
 
       Use this option if you're running ironic in a network with lower
       MTU. The value of this option should be 32 bits less than the MTU.
       If your MTU is 1450, the value for this option should be 1418.
+  disable-secure-erase:
+    default: false
+    type: boolean
+    description: |
+      This will disable secure erase in Ironic, when releasing a node. An ATA
+      Secure Erase will be attempted. If it's not supported, the disks will be
+      shreaded by writting random data to them once, then overwriting that data
+      with zeros.
+
+      Enabling this option will preserve the data on disk after release (not
+      recommended for production).
 
   
