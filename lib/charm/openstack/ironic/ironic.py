@@ -3,31 +3,20 @@
 from __future__ import absolute_import
 
 import collections
+import os
 
 import charms_openstack.charm
 import charms_openstack.adapters
 import charms_openstack.ip as os_ip
 
-import charm.openstack.ironic.controller_utils as controller_utils
 
 PACKAGES = [
     'ironic-api',
-    'ironic-conductor',
     'python-mysqldb',
-    'python3-dracclient',
-    'python3-sushy',
-    'python3-ironicclient',
-    'python3-scciclient',
-    'shellinabox',
-    'openssl',
-    'socat',
-    'open-iscsi',
-    'qemu-utils',
-    'ipmitool']
+    'python3-ironicclient']
 
 IRONIC_DIR = "/etc/ironic/"
-IRONIC_CONF = IRONIC_DIR + "ironic.conf"
-TFTP_CONF = "/etc/default/tftpd-hpa"
+IRONIC_CONF = os.path.join(IRONIC_DIR, "ironic.conf")
 
 OPENSTACK_RELEASE_KEY = 'ironic-charm.openstack-release-version'
 
@@ -83,7 +72,7 @@ class IronicAPICharm(charms_openstack.charm.HAOpenStackCharm):
     }
     service_type = 'ironic'
     default_service = 'ironic-api'
-    services = ['ironic-api', 'ironic-conductor']
+    services = ['ironic-api',]
     sync_cmd = ['ironic-dbsync', 'upgrade']
 
     required_relations = [
@@ -91,7 +80,6 @@ class IronicAPICharm(charms_openstack.charm.HAOpenStackCharm):
 
     restart_map = {
         IRONIC_CONF: services,
-        TFTP_CONF: ["tftp-hpa"]
     }
 
     ha_resources = ['vips', 'haproxy']
@@ -111,8 +99,6 @@ class IronicAPICharm(charms_openstack.charm.HAOpenStackCharm):
 
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.pxe_config = controller_utils.get_pxe_config_class(
-            self.config)
 
     def get_amqp_credentials(self):
         """Provide the default amqp username and vhost as a tuple.
@@ -127,11 +113,3 @@ class IronicAPICharm(charms_openstack.charm.HAOpenStackCharm):
                 database=self.config['database'],
                 username=self.config['database-user'], )
         ]
-
-    def install(self):
-        super().install()
-        self.pxe_config.configure_resources()
-    
-    # def configue_tls(self, certificates_instance=None):
-    #     # TODO(gsamfira): add tls support
-    #     pass
