@@ -1,5 +1,3 @@
-# Copyright 2020 Cloudbase Solutions
-
 from __future__ import absolute_import
 
 import collections
@@ -12,7 +10,7 @@ import charms_openstack.ip as os_ip
 
 PACKAGES = [
     'ironic-api',
-    'python-mysqldb',
+    'python3-mysqldb',
     'python3-ironicclient']
 
 IRONIC_DIR = "/etc/ironic/"
@@ -90,7 +88,7 @@ class IronicAPICharm(charms_openstack.charm.HAOpenStackCharm):
     # Package codename map for ironic-common
     package_codenames = {
         'ironic-common': collections.OrderedDict([
-            ('14', 'train'),
+            ('13', 'train'),
             ('15', 'ussuri'),
         ]),
     }

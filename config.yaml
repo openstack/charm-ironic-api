@@ -25,11 +25,11 @@ options:
   database-user:
     default: ironic
     type: string
-    description: Username for Magnum database access
+    description: Username for Ironic database access
   database:
     default: ironic
     type: string
-    description: Database name for Magnum
+    description: Database name for Ironic
   debug:
     default: False
     type: boolean

@@ -1,5 +1,3 @@
-# Copyright 2018 Cloudbase Solutions
-
 from __future__ import absolute_import
 
 import charms.reactive as reactive
