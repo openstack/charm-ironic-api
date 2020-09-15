@@ -7,8 +7,6 @@ import charms_openstack.charm as charm
 import charm.openstack.ironic.ironic as ironic  # noqa
 
 from charmhelpers.core.templating import render
-import charmhelpers.contrib.network.ip as ch_ip
-import charms_openstack.adapters as adapters
 
 
 # Use the charms.openstack defaults for common states and hooks
@@ -18,45 +16,55 @@ charm.use_defaults(
     'shared-db.connected',
     'identity-service.available',  # enables SSL support
     'config.changed',
-    'update-status')
+    'update-status',
+    'upgrade-charm',
+    'certificates.available')
 
 
 @reactive.when('shared-db.available')
 @reactive.when('identity-service.available')
 @reactive.when('amqp.available')
-def render_stuff(*args):
+def render(*args):
     hookenv.log("about to call the render_configs with {}".format(args))
     with charm.provide_charm_instance() as ironic_charm:
         ironic_charm.render_with_interfaces(
             charm.optional_interfaces(args))
+        ironic_charm.configure_ssl()
         ironic_charm.assess_status()
     reactive.set_state('config.complete')
 
 
 @reactive.when('identity-service.connected')
 def setup_endpoint(keystone):
-    ironic.setup_endpoint(keystone)
-    ironic.assess_status()
+    with charm.provide_charm_instance() as ironic_charm:
+        keystone.register_endpoints(
+            ironic_charm.service_type,
+            ironic_charm.region,
+            ironic_charm.public_url,
+            ironic_charm.internal_url,
+            ironic_charm.admin_url)
+        ironic_charm.assess_status()
+
+
+@reactive.when('ironic-api.available')
+@reactive.when('config.complete')
+def ironic_api_relation_joined(ironic_api):
+    with charm.provide_charm_instance() as ironic_charm:
+        ironic_charm.set_ironic_api_info(ironic_api)
 
 
 @reactive.when('config.complete')
 @reactive.when_not('db.synced')
 def run_db_migration():
-    ironic.db_sync()
-    ironic.restart_all()
+    with charm.provide_charm_instance() as ironic_charm:
+        ironic_charm.db_sync()
+        ironic_charm.restart_all()
+        ironic_charm.assess_status()
     reactive.set_state('db.synced')
-    ironic.assess_status()
 
 
 @reactive.when('ha.connected')
 def cluster_connected(hacluster):
-    ironic.configure_ha_resources(hacluster)
-
-
-@adapters.config_property
-def deployment_interface_ip(self):
-    return ch_ip.get_relation_ip("deployment")
-
-@adapters.config_property
-def internal_interface_ip(self):
-    return ch_ip.get_relation_ip("internal")
+    with charm.provide_charm_instance() as ironic_charm:
+        ironic_charm.configure_ha_resources(hacluster)
+        ironic_charm.assess_status()

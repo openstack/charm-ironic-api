@@ -6,6 +6,10 @@ import os
 import charms_openstack.charm
 import charms_openstack.adapters
 import charms_openstack.ip as os_ip
+import charmhelpers.contrib.network.ip as ch_ip
+import charms_openstack.adapters as adapters
+
+from charms import reactive
 
 
 PACKAGES = [
@@ -23,36 +27,13 @@ OPENSTACK_RELEASE_KEY = 'ironic-charm.openstack-release-version'
 charms_openstack.charm.use_defaults('charm.default-select-release')
 
 
-def db_sync_done():
-    return IronicAPICharm.singleton.db_sync_done()
+@adapters.config_property
+def deployment_interface_ip(cls):
+    return ch_ip.get_relation_ip("deployment")
 
-
-def restart_all():
-    IronicAPICharm.singleton.restart_all()
-
-
-def db_sync():
-    IronicAPICharm.singleton.db_sync()
-
-
-def configure_ha_resources(hacluster):
-    IronicAPICharm.singleton.configure_ha_resources(hacluster)
-
-
-def assess_status():
-    IronicAPICharm.singleton.assess_status()
-
-
-def setup_endpoint(keystone):
-    charm = IronicAPICharm.singleton
-    public_ep = '{}'.format(charm.public_url)
-    internal_ep = '{}'.format(charm.internal_url)
-    admin_ep = '{}'.format(charm.admin_url)
-    keystone.register_endpoints(charm.service_type,
-                                charm.region,
-                                public_ep,
-                                internal_ep,
-                                admin_ep)
+@adapters.config_property
+def internal_interface_ip(cls):
+    return ch_ip.get_relation_ip("internal")
 
 
 class IronicAPICharm(charms_openstack.charm.HAOpenStackCharm):
@@ -111,3 +92,11 @@ class IronicAPICharm(charms_openstack.charm.HAOpenStackCharm):
                 database=self.config['database'],
                 username=self.config['database-user'], )
         ]
+
+    def set_ironic_api_info(self, baremetal):
+        is_ready = reactive.flags.is_flag_set('config.complete')
+        relation_data = {"ironic-api-ready": is_ready}
+        for unit in baremetal.all_joined_units:
+            baremetal.set_baremetal_info(
+                unit.relation.relation_id,
+                relation_data)

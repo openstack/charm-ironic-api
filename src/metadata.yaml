@@ -23,3 +23,6 @@ requires:
     interface: rabbitmq
   identity-service:
     interface: keystone
+provides:
+  ironic-api:
+    interface: baremetal

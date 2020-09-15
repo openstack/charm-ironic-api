@@ -3,6 +3,7 @@ includes:
   - interface:mysql-shared
   - interface:rabbitmq
   - interface:keystone
+  - interface:ironic-api
 repo: https://github.com/gabriel-samfira/charm-ironic-api
 options:
   basic:
