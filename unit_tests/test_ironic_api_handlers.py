@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 import mock
 
 from charm.openstack.ironic import ironic
@@ -50,6 +49,7 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
             'when_not': {
                 'run_db_migration': (
                     'db.synced',),
+                'cluster_connected': ('ha.available',),
             },
             'hook': {
                 'upgrade_charm': ('upgrade-charm',),
@@ -82,7 +82,7 @@ class TestIronicHandlers(test_utils.PatchHelper):
             self.ironic_charm.internal_url,
             self.ironic_charm.admin_url)
         self.ironic_charm.assess_status.assert_called_once_with()
-    
+
     def test_ironic_api_relation_joined(self):
         ironic_api = mock.MagicMock()
         handlers.ironic_api_relation_joined(ironic_api)

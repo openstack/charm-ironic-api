@@ -31,6 +31,7 @@ charms_openstack.charm.use_defaults('charm.default-select-release')
 def deployment_interface_ip(cls):
     return ch_ip.get_relation_ip("deployment")
 
+
 @adapters.config_property
 def internal_interface_ip(cls):
     return ch_ip.get_relation_ip("internal")
@@ -41,6 +42,7 @@ class IronicAPICharm(charms_openstack.charm.HAOpenStackCharm):
     abstract_class = False
     release = 'train'
     name = 'ironic'
+    python_version = 3
     packages = PACKAGES
     api_ports = {
         'ironic-api': {
@@ -51,7 +53,7 @@ class IronicAPICharm(charms_openstack.charm.HAOpenStackCharm):
     }
     service_type = 'ironic'
     default_service = 'ironic-api'
-    services = ['ironic-api',]
+    services = ['ironic-api', ]
     sync_cmd = ['ironic-dbsync', 'upgrade']
 
     required_relations = [

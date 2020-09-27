@@ -6,8 +6,6 @@ import charmhelpers.core.hookenv as hookenv
 import charms_openstack.charm as charm
 import charm.openstack.ironic.ironic as ironic  # noqa
 
-from charmhelpers.core.templating import render
-
 
 # Use the charms.openstack defaults for common states and hooks
 charm.use_defaults(
@@ -18,7 +16,8 @@ charm.use_defaults(
     'config.changed',
     'update-status',
     'upgrade-charm',
-    'certificates.available')
+    'certificates.available',
+    'cluster.available')
 
 
 @reactive.when('shared-db.available')
@@ -64,6 +63,7 @@ def run_db_migration():
 
 
 @reactive.when('ha.connected')
+@reactive.when_not('ha.available')
 def cluster_connected(hacluster):
     with charm.provide_charm_instance() as ironic_charm:
         ironic_charm.configure_ha_resources(hacluster)

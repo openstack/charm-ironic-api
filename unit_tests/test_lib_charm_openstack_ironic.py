@@ -24,7 +24,7 @@ class TestIronicCharmConfigProperties(test_utils.PatchHelper):
     def setUp(self):
         super().setUp()
         self.patch_release(ironic.IronicAPICharm.release)
-        
+
     def test_deployment_interface_ip(self):
         cls = mock.MagicMock()
         self.patch_object(ironic, 'ch_ip')
@@ -66,7 +66,7 @@ class TestIronicCharm(test_utils.PatchHelper):
             [{
                 "database": cfg_data["database"],
                 "username": cfg_data["database-user"]}])
-    
+
     def test_set_ironic_api_info(self):
         self.patch_object(ironic.reactive.flags, 'is_flag_set')
         self.is_flag_set.return_value = True
@@ -74,17 +74,15 @@ class TestIronicCharm(test_utils.PatchHelper):
         unit = mock.MagicMock()
         unit.relation.relation_id = "fake"
         baremetal.all_joined_units = [unit]
-        relation_data = {"ready": True}
+        relation_data = {"ironic-api-ready": True}
         self.target.set_ironic_api_info(baremetal)
 
         baremetal.set_baremetal_info.assert_called_with(
             "fake", relation_data)
 
         self.is_flag_set.return_value = False
-        relation_data = {"ready": False}
+        relation_data = {"ironic-api-ready": False}
         self.target.set_ironic_api_info(baremetal)
 
         baremetal.set_baremetal_info.assert_called_with(
             "fake", relation_data)
-
-        
