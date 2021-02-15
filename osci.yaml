@@ -1,0 +1,13 @@
+- project:
+    templates:
+      - charm-unit-jobs
+    check:
+      jobs:
+      - groovy-victoria
+      - focal-victoria
+      - focal-ussuri
+      - bionic-train
+      - bionic-ussuri
+    vars:
+      needs_charm_build: true
+      charm_build_name: ironic-api
