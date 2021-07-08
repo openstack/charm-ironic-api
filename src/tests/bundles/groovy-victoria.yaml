@@ -12,6 +12,10 @@ relations:
   - neutron-api
 - - neutron-openvswitch
   - neutron-api
+- - neutron-openvswitch
+  - nova-ironic
+- - neutron-openvswitch:amqp
+  - rabbitmq-server:amqp
 - - ironic-api:amqp
   - rabbitmq-server:amqp
 - - ironic-api
