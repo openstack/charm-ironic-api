@@ -1,6 +1,6 @@
 options:
-  source: &source distro
-series: groovy
+  source: &source cloud:focal-yoga
+series: focal
 relations:
 - - nova-ironic
   - ironic-api

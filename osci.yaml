@@ -3,17 +3,19 @@
       - charm-unit-jobs
     check:
       jobs:
-      - impish-xena:
-          voting: false
-      - hirsute-wallaby
-      - groovy-victoria
-      - focal-xena:
-          voting: false
-      - focal-wallaby
-      - focal-victoria
-      - focal-ussuri
       - bionic-train
       - bionic-ussuri
+      - focal-ussuri
+      - focal-victoria
+      - focal-wallaby
+      - focal-xena
+      - focal-yoga:
+          voting: false
+      - hirsute-wallaby
+      - impish-xena:
+          voting: false
+      - jammy-yoga:
+          voting: false
     vars:
       needs_charm_build: true
       charm_build_name: ironic-api
