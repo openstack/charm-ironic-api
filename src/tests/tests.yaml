@@ -1,21 +1,15 @@
 charm_name: ironic-api
 
 gate_bundles:
-- bionic-ussuri
-- focal-ussuri
-- focal-victoria
-- focal-wallaby
 - focal-xena
-- hirsute-wallaby
 - impish-xena
 
 dev_bundles:
-- bionic-train
 - focal-yoga
 - jammy-yoga
 
 smoke_bundles:
-- focal-ussuri
+- focal-xena
 
 target_deploy_status:
   vault:
@@ -42,6 +36,5 @@ tests:
 
 tests_options:
   force_deploy:
-    - hirsute-wallaby
     - impish-xena
     - jammy-yoga
