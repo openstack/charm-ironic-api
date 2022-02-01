@@ -17,3 +17,4 @@
     vars:
       needs_charm_build: true
       charm_build_name: ironic-api
+      build_type: charmcraft
