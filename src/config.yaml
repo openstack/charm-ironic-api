@@ -42,4 +42,5 @@ options:
     default: RegionOne
     type: string
     description: OpenStack Region
-  
+  openstack-origin:
+    default: cloud:focal-xena
