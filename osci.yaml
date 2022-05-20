@@ -1,15 +1,10 @@
 - project:
     templates:
-      - charm-unit-jobs
-    check:
-      jobs:
-      - hirsute-wallaby
-      - groovy-victoria
-      - focal-wallaby
-      - focal-victoria
-      - focal-ussuri
-      - bionic-train
-      - bionic-ussuri
+      - charm-unit-jobs-py36
+      - charm-unit-jobs-py38
+      - charm-train-functional-jobs
+      - charm-ussuri-functional-jobs
     vars:
       needs_charm_build: true
       charm_build_name: ironic-api
+      build_type: charmcraft
