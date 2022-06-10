@@ -1,8 +1,8 @@
 local_overlay_enabled: False
 
 options:
-  source: &source cloud:focal-yoga
-series: focal
+  source: &source cloud:jammy-zed
+series: jammy
 relations:
 - - nova-ironic
   - ironic-api

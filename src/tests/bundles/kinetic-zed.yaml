@@ -2,7 +2,7 @@ local_overlay_enabled: False
 
 options:
   source: &source distro
-series: impish
+series: kinetic
 relations:
 - - nova-ironic
   - ironic-api
