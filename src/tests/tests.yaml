@@ -9,7 +9,7 @@ dev_bundles:
 - kinetic-zed
 
 smoke_bundles:
-- focal-yoga
+- jammy-yoga
 
 target_deploy_status:
   vault:

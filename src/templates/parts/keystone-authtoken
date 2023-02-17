@@ -33,3 +33,10 @@ signing_dir = {{ identity_service.signing_dir }}
 memcached_servers = {{ options.memcache_url }}
 {% endif -%}
 {% endif -%}
+
+[healthcheck]
+# Enable the health check endpoint at /healthcheck. Note that
+# this is unauthenticated. More information is available at
+# https://docs.openstack.org/oslo.middleware/latest/reference/healthcheck_plugins.html.
+# (boolean value)
+enabled = true

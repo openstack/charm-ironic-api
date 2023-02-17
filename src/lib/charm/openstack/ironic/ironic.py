@@ -51,6 +51,12 @@ class IronicAPICharm(charms_openstack.charm.HAOpenStackCharm):
             os_ip.INTERNAL: 6385,
         }
     }
+
+    healthcheck = {
+        'option': 'httpchk GET /healthcheck',
+        'http-check': 'expect status 200',
+    }
+
     service_type = 'ironic'
     default_service = 'ironic-api'
     services = ['ironic-api', ]
