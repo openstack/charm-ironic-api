@@ -190,7 +190,7 @@ services:
     options:
       source: *source
       namespace-tenants: True
-    channel: reef/edge
+    channel: squid/edge
   ceph-mon:
     charm: ch:ceph-mon
     num_units: 3
@@ -198,7 +198,7 @@ services:
     options:
       expected-osd-count: 3
       source: *source
-    channel: reef/edge
+    channel: squid/edge
   ceph-osd:
     charm: ch:ceph-osd
     num_units: 3
@@ -207,7 +207,7 @@ services:
       source: *source
     storage:
       osd-devices: 'cinder,30G'
-    channel: reef/edge
+    channel: squid/edge
   glance:
     charm: ch:glance
     num_units: 1
