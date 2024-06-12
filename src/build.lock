@@ -182,7 +182,7 @@
       "type": "python_module",
       "package": "setuptools",
       "vcs": null,
-      "version": "49.6.0"
+      "version": "62.1.0"
     },
     {
       "type": "python_module",
