@@ -1,6 +1,6 @@
 options:
   openstack-origin:
-    default: bobcat
+    default: caracacl
     type: string
     description: |
       Repository from which to install. May be one of the following:
@@ -42,4 +42,4 @@ options:
     default: RegionOne
     type: string
     description: OpenStack Region
-  
+

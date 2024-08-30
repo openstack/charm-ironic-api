@@ -12,8 +12,6 @@ description: |
 tags:
   - openstack
   - baremetal
-series:
-  - jammy
 subordinate: false
 requires:
   shared-db:
